@@ -828,9 +828,9 @@ int pki_bootstrap_certs()
 	/* switch (nvs) <--> controller (nvc) <--> application (nvp) */
 	digital_id_t *nvs_digital_id, *nvc_digital_id, *nvp_digital_id;
 
-	nvs_digital_id = pki_digital_id("netvirt-switch", "", "", "", "admin@netvirt.org", "www.netvirt.org");
-	nvc_digital_id = pki_digital_id("netvirt-ctrler", "", "", "", "admin@netvirt.org", "www.vetvirt.org");
-	nvp_digital_id = pki_digital_id("netvirt-app", "", "", "", "admin@netvirt.org", "www.netvirt.org");
+	nvs_digital_id = pki_digital_id("netvfy-switch", "", "", "", "contact@netvfy.com", "www.netvfy.com");
+	nvc_digital_id = pki_digital_id("netvfy-controller", "", "", "", "contact@netvfy.com", "www.netvfy.com");
+	nvp_digital_id = pki_digital_id("netvfy-app", "", "", "", "contact@netvfy.com", "www.netvfy.com");
 
 	embassy_t *nvc_embassy;
 	nvc_embassy = pki_embassy_new(nvc_digital_id, expiration_delay);
@@ -841,49 +841,49 @@ int pki_bootstrap_certs()
 	pki_write_certificate_in_mem(nvc_embassy->certificate, &cert_ptr, &size);
 	pki_write_privatekey_in_mem(nvc_embassy->keyring, &pvkey_ptr, &size);
 
-	ret = pki_write_certificate(nvc_embassy->certificate, "/etc/netvirt/certs/netvirt-ctrler-cert.pem");
+	ret = pki_write_certificate(nvc_embassy->certificate, "/etc/netvfy/certs/netvfy-ctrler-cert.pem");
 	if (ret == -1) {
-		fprintf(stderr, "can't write: /etc/netvirt/certs/netvirt-ctrler-cert.pem\n");
+		fprintf(stderr, "can't write: /etc/netvfy/certs/netvfy-ctrler-cert.pem\n");
 		goto out;
 	} else {
-		fprintf(stdout, "/etc/netvirt/certs/netvirt-ctrler-cert.pem... done\n");
+		fprintf(stdout, "/etc/netvfy/certs/netvfy-ctrler-cert.pem... done\n");
 	}
-	ret = pki_write_privatekey(nvc_embassy->keyring, "/etc/netvirt/certs/netvirt-ctrler-privkey.pem");
+	ret = pki_write_privatekey(nvc_embassy->keyring, "/etc/netvfy/certs/netvfy-ctrler-privkey.pem");
 	if (ret == -1) {
-		fprintf(stderr, "can't write: /etc/netvirt/certs/netvirt-ctrler-privkey.pem\n");
+		fprintf(stderr, "can't write: /etc/netvfy/certs/netvfy-ctrler-privkey.pem\n");
 		goto out;
 	} else {
-		fprintf(stdout, "/etc/netvirt/certs/netvirt-ctrler-privkey.pem... done\n");
-	}
-
-	ret = pki_write_certificate(nvs_passport->certificate, "/etc/netvirt/certs/netvirt-switch-cert.pem");
-	if (ret == -1) {
-		fprintf(stderr, "can't write: /etc/netvirt/certs/netvirt-switch-cert.pem\n");
-		goto out;
-	} else {
-		fprintf(stdout, "/etc/netvirt/certs/netvirt-switch-cert.pem... done\n");
-	}
-	ret = pki_write_privatekey(nvs_passport->keyring, "/etc/netvirt/certs/netvirt-switch-privkey.pem");
-	if (ret == -1) {
-		fprintf(stderr, "can't write: /etc/netvirt/certs/netvirt-switch-privkey.pem\n");
-		goto out;
-	} else {
-		fprintf(stdout, "/etc/netvirt/certs/netvirt-switch-privkey.pem... done\n");
+		fprintf(stdout, "/etc/netvfy/certs/netvfy-ctrler-privkey.pem... done\n");
 	}
 
-	ret = pki_write_certificate(nvp_passport->certificate, "/etc/netvirt/certs/netvirt-app-cert.pem");
+	ret = pki_write_certificate(nvs_passport->certificate, "/etc/netvfy/certs/netvfy-switch-cert.pem");
 	if (ret == -1) {
-		fprintf(stderr, "can't write: /etc/netvirt/certs/netvirt-app-cert.pem\n");
+		fprintf(stderr, "can't write: /etc/netvfy/certs/netvfy-switch-cert.pem\n");
 		goto out;
 	} else {
-		fprintf(stdout, "/etc/netvirt/certs/netvirt-app-cert.pem... done\n");
+		fprintf(stdout, "/etc/netvfy/certs/netvfy-switch-cert.pem... done\n");
 	}
-	ret = pki_write_privatekey(nvp_passport->keyring, "/etc/netvirt/certs/netvirt-app-privkey.pem");
+	ret = pki_write_privatekey(nvs_passport->keyring, "/etc/netvfy/certs/netvfy-switch-privkey.pem");
 	if (ret == -1) {
-		fprintf(stderr, "/etc/netvirt/certs/netvirt-app-privkey.pem\n");
+		fprintf(stderr, "can't write: /etc/netvfy/certs/netvfy-switch-privkey.pem\n");
 		goto out;
 	} else {
-		fprintf(stdout, "/etc/netvirt/certs/netvirt-app-privkey.pem... done\n");
+		fprintf(stdout, "/etc/netvfy/certs/netvfy-switch-privkey.pem... done\n");
+	}
+
+	ret = pki_write_certificate(nvp_passport->certificate, "/etc/netvfy/certs/netvfy-app-cert.pem");
+	if (ret == -1) {
+		fprintf(stderr, "can't write: /etc/netvfy/certs/netvfy-app-cert.pem\n");
+		goto out;
+	} else {
+		fprintf(stdout, "/etc/netvfy/certs/netvfy-app-cert.pem... done\n");
+	}
+	ret = pki_write_privatekey(nvp_passport->keyring, "/etc/netvfy/certs/netvfy-app-privkey.pem");
+	if (ret == -1) {
+		fprintf(stderr, "/etc/netvfy/certs/netvfy-app-privkey.pem\n");
+		goto out;
+	} else {
+		fprintf(stdout, "/etc/netvfy/certs/netvfy-app-privkey.pem... done\n");
 	}
 out:
 	pki_embassy_free(nvc_embassy);
