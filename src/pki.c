@@ -682,6 +682,10 @@ pki_deliver_cert_from_certreq(char *certreq_pem, char *emb_cert, char *emb_pvkey
         /* convert to PEM format */
         pki_write_certificate_in_mem(cert, &cert_pem, &cert_pem_len);
 
+	pki_embassy_free(embassy);
+	X509_free(cert);
+	X509_REQ_free(certreq);
+
         return (cert_pem);
 }
 
