@@ -22,6 +22,7 @@
 #include <event2/http.h>
 #include <event2/keyvalq_struct.h>
 
+#include <openssl/asn1.h>
 #include <openssl/ssl.h>
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
@@ -344,16 +345,20 @@ X509_REQ
 
 static X509 *
 pki_certificate(X509_NAME *issuer, X509_REQ *certreq,
-	    uint8_t is_CA, uint32_t serial, uint32_t expire)
+	    uint8_t is_CA, uint32_t _unused, uint32_t expire)
 {
 	//jlog(L_DEBUG, "pki_certificate");
+
+	ASN1_INTEGER	*serial;
+	BIGNUM		*bn;
+	uint8_t		 rnd[20]; /* X509v3 serial number is 20bytes */
 
 	EVP_PKEY	*pub_key = NULL;
 	X509		*certificate;
 	X509_NAME	*subject;
 
-	X509V3_CTX ctx;
-	X509_EXTENSION *ext;
+	X509V3_CTX	 ctx;
+	X509_EXTENSION	*ext;
 
 	/* verify CSR signature */
 	if ((pub_key = X509_REQ_get_pubkey(certreq)) == NULL)
@@ -365,8 +370,18 @@ pki_certificate(X509_NAME *issuer, X509_REQ *certreq,
 	/* create a new certificate */
 	certificate = X509_new();
 
-	/* set certificate unique serial number */
-	ASN1_INTEGER_set(X509_get_serialNumber(certificate), serial);
+	/* generate random 20bytes serial number */
+	/* XXX handle errors */
+	serial = ASN1_INTEGER_new();
+	bn = BN_new();
+	RAND_bytes(rnd, sizeof(rnd));
+
+	bn = BN_bin2bn(rnd, sizeof(rnd), bn);
+	serial = BN_to_ASN1_INTEGER(bn, serial);
+	X509_set_serialNumber(certificate, serial);
+
+	ASN1_INTEGER_free(serial);
+	BN_free(bn);
 
 	/* set certificate 'Subject:' */
 	subject = X509_REQ_get_subject_name(certreq);
