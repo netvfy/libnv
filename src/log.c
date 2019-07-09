@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 static void	(*cb_log)(const char *) = NULL;
 
@@ -14,12 +15,21 @@ log_setcb(void (*cb)(const char *))
 void
 log_info(const char *format, ...)
 {
+	struct tm	*tm_info;
+	time_t		 timer;
 	va_list		 list;
-	static char	 buff[512];
 	int		 len;
+	static char	 buff[512];
+	char		 cur_time[20];
+
+	time(&timer);
+	tm_info = localtime(&timer);
+	strftime(cur_time, 20, "%Y-%m-%d %H:%M:%S", tm_info);
+
+	len = snprintf(buff, sizeof(buff), "[%s] ", cur_time);
 
 	va_start(list, format);
-	len = vsnprintf(buff, sizeof(buff), format, list);
+	len += vsnprintf(buff + len, sizeof(buff) - len, format, list);
 	snprintf(buff + len, sizeof(buff) - len, "\n");
 	va_end(list);
 
@@ -32,12 +42,21 @@ log_info(const char *format, ...)
 void
 log_warnx(const char *format, ...)
 {
+	struct tm	*tm_info;
+	time_t		 timer;
 	va_list		 list;
-	static char	 buff[512];
 	int		 len;
+	static char	 buff[512];
+	char		 cur_time[20];
+
+	time(&timer);
+	tm_info = localtime(&timer);
+	strftime(cur_time, 20, "%Y-%m-%d %H:%M:%S", tm_info);
+
+	len = snprintf(buff, sizeof(buff), "[%s] ", cur_time);
 
 	va_start(list, format);
-	len = vsnprintf(buff, sizeof(buff), format, list);
+	len += vsnprintf(buff, sizeof(buff), format, list);
 	snprintf(buff + len, sizeof(buff) - len, "\n");
 	va_end(list);
 
@@ -50,12 +69,21 @@ log_warnx(const char *format, ...)
 void
 log_warn(const char *format, ...)
 {
+	struct tm	*tm_info;
+	time_t		 timer;
 	va_list		 list;
-	static char	 buff[512];
 	int		 len;
+	static char	 buff[512];
+	char		 cur_time[20];
+
+	time(&timer);
+	tm_info = localtime(&timer);
+	strftime(cur_time, 20, "%Y-%m-%d %H:%M:%S", tm_info);
+
+	len = snprintf(buff, sizeof(buff), "[%s] ", cur_time);
 
 	va_start(list, format);
-	len = vsnprintf(buff, sizeof(buff), format, list);
+	len += vsnprintf(buff, sizeof(buff), format, list);
 	snprintf(buff + len, sizeof(buff) - len, ": %s\n", strerror(errno));
 	va_end(list);
 
