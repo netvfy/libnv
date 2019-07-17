@@ -35,8 +35,10 @@ log_info(const char *format, ...)
 
 	if (cb_log)
 		cb_log(buff);
-	else
+	else {
 		fprintf(stdout, "%s", buff);
+		fflush(stdout);
+	}
 }
 
 void
@@ -62,8 +64,10 @@ log_warnx(const char *format, ...)
 
 	if (cb_log)
 		cb_log(buff);
-	else
+	else {
 		fprintf(stderr, "%s", buff);
+		fflush(stderr);
+	}
 }
 
 void
@@ -89,6 +93,9 @@ log_warn(const char *format, ...)
 
 	if (cb_log)
 		cb_log(buff);
-	else
+	else {
 		fprintf(stderr, "%s", buff);
+		fflush(stderr);
+	}
+
 }
