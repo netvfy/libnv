@@ -58,7 +58,7 @@ log_warnx(const char *format, ...)
 	len = snprintf(buff, sizeof(buff), "[%s] ", cur_time);
 
 	va_start(list, format);
-	len += vsnprintf(buff, sizeof(buff), format, list);
+	len += vsnprintf(buff + len, sizeof(buff) - len, format, list);
 	snprintf(buff + len, sizeof(buff) - len, "\n");
 	va_end(list);
 
@@ -87,7 +87,7 @@ log_warn(const char *format, ...)
 	len = snprintf(buff, sizeof(buff), "[%s] ", cur_time);
 
 	va_start(list, format);
-	len += vsnprintf(buff, sizeof(buff), format, list);
+	len += vsnprintf(buff + len, sizeof(buff) - len, format, list);
 	snprintf(buff + len, sizeof(buff) - len, ": %s\n", strerror(errno));
 	va_end(list);
 
