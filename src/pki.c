@@ -96,7 +96,7 @@ struct certinfo
 	}
 
 	if ((evhttp_parse_query_str(cn, &headers)) < 0) {
-		log_warnx("%s: evhttp_parse_query_str", __func__);
+		//XXX log_warnx("%s: evhttp_parse_query_str", __func__);
 		goto error;
 	}
 
