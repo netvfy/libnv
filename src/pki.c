@@ -169,7 +169,6 @@ passport_t *pki_passport_load_from_memory(const char *cert, const char *pvkey,
 	X509_STORE_add_cert(passport->cacert_store, passport->cacert);
 
 	if ((passport->certinfo = certinfo(passport->certificate)) == NULL) {
-		log_warnx("%s: certinfo", __func__);
 		// XXX
 	}
 
