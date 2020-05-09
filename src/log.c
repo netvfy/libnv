@@ -47,7 +47,7 @@ log_debug(const char *format, ...)
 	static char	 buff[512];
 	char		 cur_time[20];
 
-	if (log_lvl_debug != 0)
+	if (log_lvl_debug == 0)
 		return;
 
 	time(&timer);
