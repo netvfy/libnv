@@ -344,16 +344,20 @@ pm_dump_counter(pm_metric *m, char *buf, const size_t bufsz)
 	for (i_store = 0; i_store < m->n_store; i_store++) {
 		if (i_store > 0) {
 			ret = snprintf(buf+off, bufsz-off, "\n");
-			if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+			if (ret < 0 || ret >= bufsz-off) goto error;
+			off += ret;
 		}
 		ret = snprintf(buf+off, bufsz-off, "%s{", m->name);
-		if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+		if (ret < 0 || ret >= bufsz-off) goto error;
+		off += ret;
 
 		ret = pm_dump_label(m, i_store, buf+off, bufsz-off);
-		if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+		if (ret < 0 || ret >= bufsz-off) goto error;
+		off += ret;
 
 		ret = snprintf(buf+off, bufsz-off, "} %f", m->s[i_store].counter);
-		if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+		if (ret < 0 || ret >= bufsz-off) goto error;
+		off += ret;
 	}
 out:
 	return (off);
@@ -380,16 +384,20 @@ pm_dump_gauge(pm_metric *m, char *buf, const size_t bufsz)
 	for (i_store = 0; i_store < m->n_store; i_store++) {
 		if (i_store > 0) {
 			ret = snprintf(buf+off, bufsz-off, "\n");
-			if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+			if (ret < 0 || ret >= bufsz-off) goto error;
+			off += ret;
 		}
 		ret = snprintf(buf+off, bufsz-off, "%s{", m->name);
-		if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+		if (ret < 0 || ret >= bufsz-off) goto error;
+		off += ret;
 
 		ret = pm_dump_label(m, i_store, buf+off, bufsz-off);
-		if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+		if (ret < 0 || ret >= bufsz-off) goto error;
+		off += ret;
 
 		ret = snprintf(buf+off, bufsz-off, "} %f", m->s[i_store].gauge);
-		if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+		if (ret < 0 || ret >= bufsz-off) goto error;
+		off += ret;
 	}
 out:
 	return (off);
@@ -424,26 +432,31 @@ pm_dump_histogram(pm_metric *m, char *buf, const size_t bufsz)
 
 		if (i_store > 0) {
 			ret = snprintf(buf+off, bufsz-off, "\n");
-			if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+			if (ret < 0 || ret >= bufsz-off) goto error;
+			off += ret;
 		}
 
 		for (i_bin = 0; i_bin < m->n_bin; i_bin++) {
 			ret = snprintf(buf+off, bufsz-off, "%s_bucket{%s,le=\"%f\"} %llu\n",
 				m->name, lbltmp, m->bin[i_bin], m->s[i_store].histogram.cnt[i_bin]);
-			if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+			if (ret < 0 || ret >= bufsz-off) goto error;
+			off += ret;
 		}
 
 		ret = snprintf(buf+off, bufsz-off, "%s_bucket{%s,le=\"+Inf\"} %llu\n",
 			m->name, lbltmp, m->s[i_store].histogram.inf);
-		if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+		if (ret < 0 || ret >= bufsz-off) goto error;
+		off += ret;
 
 		ret = snprintf(buf+off, bufsz-off, "%s_sum{%s} %f\n",
 			m->name, lbltmp, m->s[i_store].histogram.sum);
-		if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+		if (ret < 0 || ret >= bufsz-off) goto error;
+		off += ret;
 
 		ret = snprintf(buf+off, bufsz-off, "%s_count{%s} %llu",
 			m->name, lbltmp, m->s[i_store].histogram.inf);
-		if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+		if (ret < 0 || ret >= bufsz-off) goto error;
+		off += ret;
 	}
 out:
 	return (off);
@@ -468,12 +481,14 @@ pm_dump_label(pm_metric *m, uint32_t storeidx, char *buf, const size_t bufsz)
 	for (i = 0; i < m->n_label; i++) {
 		if (i > 0) {
 			ret = snprintf(buf+off, bufsz-off, ",");
-			if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+			if (ret < 0 || ret >= bufsz-off) goto error;
+			off += ret;
 		}
 
 		ret = snprintf(buf+off, bufsz-off, "%s=%s",
 			m->label[i], m->s[storeidx].lblval[i]);
-		if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+		if (ret < 0 || ret >= bufsz-off) goto error;
+		off += ret;
 	}
 
 	return (off);
@@ -497,24 +512,29 @@ pm_dump(char *buf, const size_t bufsz)
 	for (i = 0; i < n_metric; i++) {
 		if (i > 0) {
 			ret = snprintf(buf+off, bufsz-off, "\n\n");
-			if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+			if (ret < 0 || ret >= bufsz-off) goto error;
+			off += ret;
 		}
 
 		ret = snprintf(buf+off, bufsz-off, "# HELP %s %s\n# TYPE %s %s\n",
 			metric[i].name, metric[i].help,  metric[i].name, metric[i].type);
-		if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+		if (ret < 0 || ret >= bufsz-off) goto error;
+		off += ret;
 
 		if (strcmp(metric[i].type, PM_COUNTER) == 0) {
 			ret = pm_dump_counter(&metric[i], buf+off, bufsz-off);
-			if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+			if (ret < 0 || ret >= bufsz-off) goto error;
+			off += ret;
 
 		} else if (strcmp(metric[i].type, PM_GAUGE) == 0) {
 			ret = pm_dump_gauge(&metric[i], buf+off, bufsz-off);
-			if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+			if (ret < 0 || ret >= bufsz-off) goto error;
+			off += ret;
 
 		} else if (strcmp(metric[i].type, PM_HISTOGRAM) == 0) {
 			ret = pm_dump_histogram(&metric[i], buf+off, bufsz-off);
-			if (ret < 0 || ret >= bufsz-off) goto error; off += ret;
+			if (ret < 0 || ret >= bufsz-off) goto error;
+			off += ret;
 		}
 	}
 
