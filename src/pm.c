@@ -52,11 +52,11 @@ typedef struct {
 	} s[PM_STORE_MAX];
 } pm_metric;
 
-static int		pm_metric_get_store_index(pm_metric *, va_list *);
-static int		pm_dump_counter(pm_metric *, char *, const size_t);
-static int		pm_dump_gauge(pm_metric *, char *, const size_t);
-static int		pm_dump_histogram(pm_metric *, char *, const size_t);
-static size_t		pm_dump_label(pm_metric *, uint32_t, char *, const size_t);
+static int32_t		pm_metric_get_store_index(pm_metric *, va_list *);
+static int32_t		pm_dump_counter(pm_metric *, char *, const size_t);
+static int32_t		pm_dump_gauge(pm_metric *, char *, const size_t);
+static int32_t		pm_dump_histogram(pm_metric *, char *, const size_t);
+static int32_t		pm_dump_label(pm_metric *, uint32_t, char *, const size_t);
 
 static pm_metric	metric[PM_METRIC_MAX];
 static uint32_t		n_metric;
@@ -78,13 +78,13 @@ static uint32_t		n_metric;
  *
  * A metric can have up to PM_STORE_MAX stores.
  */
-int
+int32_t
 pm_metric_get_store_index(pm_metric *m, va_list *ap1)
 {
 	va_list		ap;
 	uint32_t	i, j;
-	int		idx = -1;
 	uint32_t	ret;
+	int32_t		idx = -1;
 	uint8_t		match;
 	const char	*label;
 	char		lbltmp[PM_LABEL_MAX][PM_LEN];
@@ -153,7 +153,7 @@ pm_metric_add(const char *name, const char *help, const char *type, const uint32
 	pm_metric	*m = NULL;
 	va_list		 args;
 	uint32_t	 i, j;
-	uint32_t	 ret = 0;
+	int32_t		 ret = 0;
 
 	for (i = 0; i < PM_METRIC_MAX; i++)
 		if (strlen(metric[i].name) == 0)
@@ -193,12 +193,12 @@ out:
  * Create the bin values of an histogram. This function expect that every bin
  * received in parameter is of type double. if an error occurs, -1 is returned.
  */
-int
+int32_t
 pm_metric_bins(pm_metric *m, const uint32_t n_bin, ...)
 {
 	va_list		args;
 	uint32_t	i;
-	int		err = -1;
+	int32_t		err = -1;
 
 	if (strcmp(m->type, PM_HISTOGRAM) != 0)
 		goto out;
@@ -219,12 +219,12 @@ out:
  * can't be lower than 0. This function expect the metric labels and
  * their value in parameter. If an error occurs, -1 is returned.
  */
-int
+int32_t
 pm_counter_add(pm_metric *m, const double value, ...)
 {
 	va_list	ap;
-	int	idx;
-	int	err = -1;
+	int32_t	idx;
+	int32_t	err = -1;
 
 	if (strcmp(m->type, PM_COUNTER) != 0)
 		goto out;
@@ -248,12 +248,12 @@ out:
  * the metric labels and their value in parameter. If an error occurs,
  * -1 is returned.
  */
-int
+int32_t
 pm_gauge_set(pm_metric *m, const double value, ...)
 {
 	va_list	ap;
-	int	idx;
-	int	err = -1;
+	int32_t	idx;
+	int32_t	err = -1;
 
 	if (strcmp(m->type, PM_GAUGE) != 0)
 		goto out;
@@ -274,12 +274,12 @@ out:
  * the metric labels and their value in parameter. If an error occurs,
  * -1 is returned.
  */
-int
+int32_t
 pm_gauge_add(pm_metric *m, const double value, ...)
 {
 	va_list	ap;
-	int	idx;
-	int	err = -1;
+	int32_t	idx;
+	int32_t	err = -1;
 
 	if (strcmp(m->type, PM_GAUGE) != 0)
 		goto out;
@@ -299,13 +299,13 @@ out:
  * in parameter the metric labels and their values. If an error occurs,
  * -1 is returned.
  */
-int
+int32_t
 pm_histogram_observe(pm_metric *m, const double value, ...)
 {
 	va_list		ap;
 	uint32_t	i;
-	int		idx;
-	int		err = -1;
+	int32_t		idx;
+	int32_t		err = -1;
 
 	if (strcmp(m->type, PM_HISTOGRAM) != 0)
 		goto out;
@@ -332,12 +332,11 @@ out:
  * or equal to the bufsz argument, the buffer was too short and some of the
  * printed characters were discarded. If an error occurs, -1 is returned.
  */
-int
+int32_t
 pm_dump_counter(pm_metric *m, char *buf, const size_t bufsz)
 {
-	uint32_t	i_bin;
 	uint32_t	i_store;
-	uint32_t	ret = 0, off = 0;
+	int32_t		ret = 0, off = 0;
 
 	if (m->n_store == 0)
 		goto out;
@@ -369,12 +368,11 @@ error:
  * or equal to the bufsz argument, the buffer was too short and some of the
  * printed characters were discarded. If an error occurs, -1 is returned.
  */
-int
+int32_t
 pm_dump_gauge(pm_metric *m, char *buf, const size_t bufsz)
 {
-	uint32_t	i_bin;
 	uint32_t	i_store;
-	uint32_t	ret = 0, off = 0;
+	int32_t		ret = 0, off = 0;
 
 	if (m->n_store == 0)
 		goto out;
@@ -406,12 +404,12 @@ error:
  * or equal to the bufsz argument, the buffer was too short and some of the
  * printed characters were discarded. If an error occurs, -1 is returned.
  */
-int
+int32_t
 pm_dump_histogram(pm_metric *m, char *buf, const size_t bufsz)
 {
 	uint32_t	i_bin;
 	uint32_t	i_store;
-	uint32_t	ret = 0, off = 0;
+	int32_t		ret = 0, off = 0;
 	char		lbltmp[(PM_LEN * PM_LABEL_MAX * 2) + (PM_LABEL_MAX * 2 - 1)];
 
 	if (m->n_bin == 0 || m->n_store == 0)
@@ -461,11 +459,11 @@ error:
  * some of the printed characters were discarded. If an error occurs, -1 is
  * returned.
  */
-size_t
+int32_t
 pm_dump_label(pm_metric *m, uint32_t storeidx, char *buf, const size_t bufsz)
 {
 	uint32_t	i;
-	uint32_t	ret = 0, off = 0;
+	int32_t		ret = 0, off = 0;
 
 	for (i = 0; i < m->n_label; i++) {
 		if (i > 0) {
@@ -490,12 +488,11 @@ error:
  * to the bufsz argument, the buffer was too short and some of the printed
  * characters were discarded. If an error occurs, -1 is returned.
  */
-size_t
+int32_t
 pm_dump(char *buf, const size_t bufsz)
 {
 	uint32_t	i;
-	uint32_t	ret = 0, off = 0;
-	uint8_t		done;
+	int32_t		ret = 0, off = 0;
 
 	for (i = 0; i < n_metric; i++) {
 		if (i > 0) {
