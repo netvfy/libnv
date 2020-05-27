@@ -14,6 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <inttypes.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -437,13 +438,13 @@ pm_dump_histogram(pm_metric *m, char *buf, const size_t bufsz)
 		}
 
 		for (i_bin = 0; i_bin < m->n_bin; i_bin++) {
-			ret = snprintf(buf+off, bufsz-off, "%s_bucket{%s,le=\"%f\"} %llu\n",
+			ret = snprintf(buf+off, bufsz-off, "%s_bucket{%s,le=\"%f\"} %"PRIu64"\n",
 				m->name, lbltmp, m->bin[i_bin], m->s[i_store].histogram.cnt[i_bin]);
 			if (ret < 0 || ret >= bufsz-off) goto error;
 			off += ret;
 		}
 
-		ret = snprintf(buf+off, bufsz-off, "%s_bucket{%s,le=\"+Inf\"} %llu\n",
+		ret = snprintf(buf+off, bufsz-off, "%s_bucket{%s,le=\"+Inf\"} %"PRIu64"\n",
 			m->name, lbltmp, m->s[i_store].histogram.inf);
 		if (ret < 0 || ret >= bufsz-off) goto error;
 		off += ret;
@@ -453,7 +454,7 @@ pm_dump_histogram(pm_metric *m, char *buf, const size_t bufsz)
 		if (ret < 0 || ret >= bufsz-off) goto error;
 		off += ret;
 
-		ret = snprintf(buf+off, bufsz-off, "%s_count{%s} %llu",
+		ret = snprintf(buf+off, bufsz-off, "%s_count{%s} %"PRIu64"",
 			m->name, lbltmp, m->s[i_store].histogram.inf);
 		if (ret < 0 || ret >= bufsz-off) goto error;
 		off += ret;
