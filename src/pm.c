@@ -28,7 +28,7 @@
 #define PM_LABEL_MAX		5
 #define PM_STORE_MAX		5
 #define PM_METRIC_MAX		30
-#define PM_HIST_BIN_MAX		10
+#define PM_HIST_BIN_MAX		11
 
 typedef struct {
 	char		name[PM_LEN];
@@ -52,6 +52,8 @@ typedef struct {
 		};
 	} s[PM_STORE_MAX];
 } pm_metric;
+
+static const double	defbin[] = {.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10};
 
 static int32_t		pm_metric_get_store_index(pm_metric *, va_list *);
 static int32_t		pm_dump_counter(pm_metric *, char *, const size_t);
@@ -153,7 +155,7 @@ pm_metric_add(const char *name, const char *help, const char *type, const uint32
 {
 	pm_metric	*m = NULL;
 	va_list		 args;
-	uint32_t	 i, j;
+	uint32_t	 i, j, k;
 	int32_t		 ret = 0;
 
 	for (i = 0; i < PM_METRIC_MAX; i++)
@@ -182,6 +184,13 @@ pm_metric_add(const char *name, const char *help, const char *type, const uint32
 		goto out;
 	}
 
+	/* Set the default histogram bins */
+	if (strcmp(type, PM_HISTOGRAM) == 0) {
+		metric[i].n_bin = sizeof(defbin)/sizeof(defbin[0]);
+		for (k = 0; k < PM_HIST_BIN_MAX && k < metric[i].n_bin; k++)
+			metric[i].bin[k] = defbin[k];
+	}
+
 	metric[i].n_label = n_label;
 	m = &metric[i];
 	n_metric++;
@@ -203,6 +212,8 @@ pm_metric_bins(pm_metric *m, const uint32_t n_bin, ...)
 
 	if (strcmp(m->type, PM_HISTOGRAM) != 0)
 		goto out;
+
+	bzero(m->bin, PM_HIST_BIN_MAX);
 
 	va_start(args, n_bin);
 	for (i = 0; i < n_bin && i < PM_HIST_BIN_MAX; i++)
@@ -596,7 +607,8 @@ example()
 		return (-1);
 	}
 
-	pm_metric_bins(m3, 5, 0.05, 0.1, 0.2, 0.5, 1.0);
+	/* overwrite the default histogram bins */
+	pm_metric_bins(m3, 5, (double)0.05, (double)0.1, (double)0.2, (double)0.5, (double)1.0);
 
 	pm_histogram_observe(m3, 0.04, "node", "miami1", "user", "bob", "handler", "/v1/");
 	pm_histogram_observe(m3, 0.09, "node", "miami1", "user", "bob", "handler", "/v1/");
@@ -620,7 +632,7 @@ example()
 	pm_histogram_observe(m3, 1.991, "node", "tor1", "user", "bob", "handler", "/v2/");
 
 	int	total;
-	char	buf[4000];
+	char	buf[5000];
 
 	total = pm_dump(buf, sizeof(buf));
 	printf("%s\n", buf);
