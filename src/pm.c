@@ -213,6 +213,8 @@ pm_metric_bins(pm_metric *m, const uint32_t n_bin, ...)
 	if (strcmp(m->type, PM_HISTOGRAM) != 0)
 		goto out;
 
+	bzero(m->bin, PM_HIST_BIN_MAX);
+
 	va_start(args, n_bin);
 	for (i = 0; i < n_bin && i < PM_HIST_BIN_MAX; i++)
 		m->bin[i] = va_arg(args, double);
@@ -606,7 +608,7 @@ example()
 	}
 
 	/* overwrite the default histogram bins */
-	pm_metric_bins(m3, 5, 0.05, 0.1, 0.2, 0.5, 1.0);
+	pm_metric_bins(m3, 5, (double)0.05, (double)0.1, (double)0.2, (double)0.5, (double)1.0);
 
 	pm_histogram_observe(m3, 0.04, "node", "miami1", "user", "bob", "handler", "/v1/");
 	pm_histogram_observe(m3, 0.09, "node", "miami1", "user", "bob", "handler", "/v1/");
