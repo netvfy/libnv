@@ -86,7 +86,7 @@ pm_metric_get_store_index(pm_metric *m, va_list *ap1)
 {
 	va_list		ap;
 	uint32_t	i, j;
-	uint32_t	ret;
+	int32_t		ret;
 	int32_t		idx = -1;
 	uint8_t		match;
 	const char	*label;
