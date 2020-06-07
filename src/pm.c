@@ -20,10 +20,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define PM_COUNTER	"counter"
-#define PM_GAUGE	"gauge"
-#define PM_HISTOGRAM	"histogram"
-
 #define PM_LEN			128
 #define PM_LABEL_MAX		5
 #define PM_STORE_MAX		5

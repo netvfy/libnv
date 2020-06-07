@@ -20,6 +20,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define PM_COUNTER	"counter"
+#define PM_GAUGE	"gauge"
+#define PM_HISTOGRAM	"histogram"
+
 typedef struct pm_metric pm_metric;
 
 pm_metric	*pm_metric_add(const char *, const char *, const char *, const uint32_t, ...);
