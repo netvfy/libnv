@@ -12,6 +12,7 @@ if (APPLE)
   endif()
   include_directories("${OPENSSL_ROOT_DIR}/include")
   link_directories("${OPENSSL_ROOT_DIR}/lib")
+  set(compat_src bsd-asprintf.c bsd-strtonum.c)
 endif()
 
 if (WIN32)
