@@ -26,8 +26,8 @@
 
 #define PM_LEN			128
 #define PM_LABEL_MAX		5
-#define PM_STORE_MAX		5
-#define PM_METRIC_MAX		30
+#define PM_STORE_MAX		100
+#define PM_METRIC_MAX		60
 #define PM_HIST_BIN_MAX		11
 
 typedef struct {
