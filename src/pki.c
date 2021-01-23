@@ -360,12 +360,16 @@ pki_certificate(X509_NAME *issuer, X509_REQ *certreq,
 	X509_EXTENSION	*ext;
 
 	/* verify CSR signature */
-	if ((pub_key = X509_REQ_get_pubkey(certreq)) == NULL)
+	if ((pub_key = X509_REQ_get_pubkey(certreq)) == NULL) {
+		log_warnx("%s: X509_get_pubkey", __func__);
 		return (NULL);
+	}
 
-	if (X509_REQ_verify(certreq, pub_key) != 1)
+	if (X509_REQ_verify(certreq, pub_key) != 1) {
+		log_warnx("%s: X509_get_pubkey", __func__);
 		return (NULL);
-	
+	}
+
 	/* create a new certificate */
 	certificate = X509_new();
 
@@ -649,26 +653,30 @@ passport_t *pki_embassy_deliver_passport(embassy_t *embassy, digital_id_t *digit
 char *
 pki_deliver_cert_from_certreq(char *certreq_pem, char *emb_cert, char *emb_pvkey, uint32_t emb_serial, const char *cn)
 {
-        X509		*cert = NULL;
-        X509_NAME	*issuer = NULL;
-        X509_REQ	*certreq = NULL;
-        embassy_t	*embassy = NULL;
-        long		 cert_pem_len = 0;
-        int		 exp_delay = 0;
-        char		*cert_pem = NULL;
+	X509		*cert = NULL;
+	X509_NAME	*issuer = NULL;
+	X509_REQ	*certreq = NULL;
+	embassy_t	*embassy = NULL;
+	long		 cert_pem_len = 0;
+	int		 exp_delay = 0;
+	char		*cert_pem = NULL;
 
-        /* convert from PEM format */
-        certreq = pki_csr_load_from_memory(certreq_pem);
+	/* convert from PEM format */
+	certreq = pki_csr_load_from_memory(certreq_pem);
 
-        /* load embassy object */
-        embassy = pki_embassy_load_from_memory(emb_cert, emb_pvkey, emb_serial);
+	/* load embassy object */
+	embassy = pki_embassy_load_from_memory(emb_cert, emb_pvkey, emb_serial);
 
-        exp_delay = pki_expiration_delay(10);
+	exp_delay = pki_expiration_delay(10);
 
-        /* extract issuer from CA certificate */
-        issuer = X509_get_subject_name(embassy->certificate);
+	/* extract issuer from CA certificate */
+	issuer = X509_get_subject_name(embassy->certificate);
 
-        cert = pki_certificate(issuer, certreq, false, embassy->serial, exp_delay);
+	if ((cert = pki_certificate(issuer, certreq, false, embassy->serial, exp_delay))
+	    == NULL) {
+		log_warnx("%s: X509_get_subject_name", __func__);
+		goto out;
+	}
 
 	/* set certificate request 'Subject:' */
 	X509_NAME *subject = X509_NAME_new();
@@ -676,18 +684,17 @@ pki_deliver_cert_from_certreq(char *certreq_pem, char *emb_cert, char *emb_pvkey
 	X509_set_subject_name(cert, subject);
 	X509_NAME_free(subject);
 
-        pki_sign_certificate(embassy->keyring, cert);
+	pki_sign_certificate(embassy->keyring, cert);
 
-        /* convert to PEM format */
-        pki_write_certificate_in_mem(cert, &cert_pem, &cert_pem_len);
-
+	/* convert to PEM format */
+	pki_write_certificate_in_mem(cert, &cert_pem, &cert_pem_len);
+out:
 	pki_embassy_free(embassy);
 	X509_free(cert);
 	X509_REQ_free(certreq);
 
-        return (cert_pem);
+	return (cert_pem);
 }
-
 
 uint32_t pki_expiration_delay(uint8_t years)
 {
