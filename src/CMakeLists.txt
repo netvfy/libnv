@@ -26,6 +26,7 @@ set(NV_SRCS
 	log.c
 	pki.c
 	pm.c
+	nvcrypt.c
 	${compat_src}
 )
 
