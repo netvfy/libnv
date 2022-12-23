@@ -26,7 +26,8 @@ set(NV_SRCS
 	log.c
 	pki.c
 	pm.c
-	nvcrypt.c
+	crypt.c
+	crypt_blowfish.c
 	${compat_src}
 )
 
