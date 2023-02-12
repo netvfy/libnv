@@ -651,7 +651,7 @@ passport_t *pki_embassy_deliver_passport(embassy_t *embassy, digital_id_t *digit
 }
 
 char *
-pki_deliver_cert_from_certreq(char *certreq_pem, char *emb_cert, char *emb_pvkey, uint32_t emb_serial, const char *cn)
+pki_deliver_cert_from_certreq(const char *certreq_pem, const char *emb_cert, const char *emb_pvkey, uint32_t emb_serial, const char *cn)
 {
 	X509		*cert = NULL;
 	X509_NAME	*issuer = NULL;
@@ -707,7 +707,7 @@ uint32_t pki_expiration_delay(uint8_t years)
 }
 
 X509_REQ *
-pki_csr_load_from_memory(char *certreq_pem)
+pki_csr_load_from_memory(const char *certreq_pem)
 {
 	BIO *bio_memory = NULL;
 	X509_REQ *certreq = NULL;
@@ -719,7 +719,7 @@ pki_csr_load_from_memory(char *certreq_pem)
 	return certreq;
 }
 
-embassy_t *pki_embassy_load_from_memory(char *certificate, char *privatekey, uint32_t serial)
+embassy_t *pki_embassy_load_from_memory(const char *certificate, const char *privatekey, uint32_t serial)
 {
 	BIO *bio_memory = NULL;
 	embassy_t *embassy;
