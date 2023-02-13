@@ -344,7 +344,7 @@ X509_REQ
 
 static X509 *
 pki_certificate(X509_NAME *issuer, X509_REQ *certreq,
-	    uint8_t is_CA, uint32_t _unused, uint32_t expire)
+	    uint8_t is_CA, uint32_t expire)
 {
 	//jlog(L_DEBUG, "pki_certificate");
 
@@ -583,7 +583,7 @@ embassy_t *pki_embassy_new(digital_id_t *digital_id, uint32_t expiration_delay)
 	issuer = X509_REQ_get_subject_name(cert_req);
 
 	// create the certificate from the certificate request and keyring
-	certificate = pki_certificate(issuer, cert_req, true, serial++, expiration_delay);
+	certificate = pki_certificate(issuer, cert_req, true, expiration_delay);
 	X509_REQ_free(cert_req);
 
 	// self-sign the certificate with our own keyring
@@ -632,7 +632,7 @@ passport_t *pki_embassy_deliver_passport(embassy_t *embassy, digital_id_t *digit
 	issuer = X509_get_subject_name(embassy->certificate);
 
 	// create the certificate from the certificate request and keyring
-	certificate = pki_certificate(issuer, cert_req, false, embassy->serial++, expiration_delay);
+	certificate = pki_certificate(issuer, cert_req, false, expiration_delay);
 	X509_REQ_free(cert_req);
 
 	// sign the certificate with the certificate authority
@@ -651,7 +651,7 @@ passport_t *pki_embassy_deliver_passport(embassy_t *embassy, digital_id_t *digit
 }
 
 char *
-pki_deliver_cert_from_certreq(const char *certreq_pem, const char *emb_cert, const char *emb_pvkey, uint32_t emb_serial, const char *cn)
+pki_deliver_cert_from_certreq(const char *certreq_pem, const char *emb_cert, const char *emb_pvkey, const char *cn)
 {
 	X509		*cert = NULL;
 	X509_NAME	*issuer = NULL;
@@ -665,14 +665,14 @@ pki_deliver_cert_from_certreq(const char *certreq_pem, const char *emb_cert, con
 	certreq = pki_csr_load_from_memory(certreq_pem);
 
 	/* load embassy object */
-	embassy = pki_embassy_load_from_memory(emb_cert, emb_pvkey, emb_serial);
+	embassy = pki_embassy_load_from_memory(emb_cert, emb_pvkey);
 
 	exp_delay = pki_expiration_delay(10);
 
 	/* extract issuer from CA certificate */
 	issuer = X509_get_subject_name(embassy->certificate);
 
-	if ((cert = pki_certificate(issuer, certreq, false, embassy->serial, exp_delay))
+	if ((cert = pki_certificate(issuer, certreq, false, exp_delay))
 	    == NULL) {
 		log_warnx("%s: X509_get_subject_name", __func__);
 		goto out;
@@ -719,7 +719,7 @@ pki_csr_load_from_memory(const char *certreq_pem)
 	return certreq;
 }
 
-embassy_t *pki_embassy_load_from_memory(const char *certificate, const char *privatekey, uint32_t serial)
+embassy_t *pki_embassy_load_from_memory(const char *certificate, const char *privatekey)
 {
 	BIO *bio_memory = NULL;
 	embassy_t *embassy;
@@ -736,8 +736,6 @@ embassy_t *pki_embassy_load_from_memory(const char *certificate, const char *pri
 	bio_memory = BIO_new_mem_buf(privatekey, strlen(privatekey));
 	embassy->keyring = PEM_read_bio_PrivateKey(bio_memory, NULL, NULL, NULL);
 	BIO_free(bio_memory);
-
-	embassy->serial = serial;
 
 	return embassy;
 }

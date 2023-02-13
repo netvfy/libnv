@@ -99,11 +99,11 @@ embassy_t *pki_embassy_new(digital_id_t *digital_id, uint32_t expiration_delay);
 void pki_passport_free(passport_t *passport);
 passport_t *pki_embassy_deliver_passport(embassy_t *embassy, digital_id_t *digital_id, uint32_t expiration_delay);
 
-embassy_t *pki_embassy_load_from_memory(const char *, const char *, uint32_t serial);
+embassy_t *pki_embassy_load_from_memory(const char *, const char *);
 int pki_bootstrap_certs();
 
 X509_REQ *pki_csr_load_from_memory(const char *);
 
-char *pki_deliver_cert_from_certreq(const char *, const char *, const char *, uint32_t, const char *);
+char *pki_deliver_cert_from_certreq(const char *, const char *, const char *, const char *);
 
 #endif
