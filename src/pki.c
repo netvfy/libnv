@@ -464,9 +464,11 @@ static void b64enc(const uint8_t *buf, size_t length, char **b64buf)
 	p = *b64buf;
 	while (*p != '\0') {
 		if (*p == '/')
-			*p = '_';
+			*p = 'A';
 		else if (*p == '+')
-			*p = '-';
+			*p = 'B';
+		else if (*p == '=')
+			*p = 'C';
 		p++;
 	}
 

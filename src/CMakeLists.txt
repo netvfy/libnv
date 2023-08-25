@@ -1,4 +1,9 @@
-set(CMAKE_C_FLAGS "-I/usr/local/include -L/usr/local/lib -g -W -Wall -DHAVE_VA_COPY ${compiler_options}")
+set(CMAKE_C_FLAGS
+	"-I${LIBEVENT_CUSTOM_DIR}/include \
+	-I/usr/local/include \
+	-L/usr/local/lib \
+	-g -W -Wall \
+	-DHAVE_VA_COPY ${compiler_options}")
 
 add_subdirectory(tests)
 
