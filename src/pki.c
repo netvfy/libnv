@@ -270,40 +270,7 @@ EVP_PKEY
 	return keyring;
 
 }
-/*
-static EVP_PKEY *pki_generate_rsa_keyring()
-{
-	//jlog(L_DEBUG, "pki_generate_keyring");
 
-	EVP_PKEY *keyring;
-	RSA *rsa_keys;
-
-	// create a new keyring
-	keyring = EVP_PKEY_new();
-
-	// generate RSA type public and private keys
-	rsa_keys = RSA_generate_key(2048, RSA_F4, NULL, NULL);
-
-	// if the keys are not usable, give it another try
-	if (RSA_check_key(rsa_keys) != 1) {
-
-		RSA_free(rsa_keys);
-		rsa_keys = RSA_generate_key(2048, RSA_F4, NULL, NULL);
-
-		// we are in serious problem here
-		if (RSA_check_key(rsa_keys) != 1) {
-			RSA_free(rsa_keys);
-			return NULL;
-		}
-	}
-
-	// add the RSA keys into the keyring
-	EVP_PKEY_set1_RSA(keyring, rsa_keys);
-	RSA_free(rsa_keys);
-
-	return keyring;
-}
-*/
 X509_REQ 
 *pki_certificate_request(EVP_PKEY *keyring, digital_id_t *digital_id)
 {
